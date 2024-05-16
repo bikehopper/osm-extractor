@@ -1,0 +1,12 @@
+{
+    "extracts": [
+        {
+            "output": "san-francisco-bay-area.osm.pbf",
+            "description": "San Francisco Bay Area nine counties.",
+            "polygon": {
+                "file_name": "san-francisco-bay-area-polygon.geojson",
+                "file_type": "geojson"
+            }
+        }
+    ]
+}
