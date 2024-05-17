@@ -66,11 +66,10 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact/merge@v4
         with:
           name: digests
           path: /tmp/digests/*
-          separate-directories: true
           if-no-files-found: error
           retention-days: 1
 
