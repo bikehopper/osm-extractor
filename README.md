@@ -20,7 +20,7 @@ curl 'https://download.geofabrik.de/north-america/us/california/norcal-latest.os
 ```
 npx --yes mapshaper -i counties-usa.geojson -filter '"Alameda,Contra Costa,Marin,Napa,San Mateo,Santa Clara,Solano,Sonoma,San Francisco".indexOf(NAME) > -1' -dissolve2 -o ./polygons/san-francisco-bay-area.geojson geojson-type=Feature
 ```
-4. (optional) Create a convex hull of the counties. This is useful when the group of counties dont make a nice solid shape. user the geojson file created in the previous step to make a new geojson file. 
+4. (optional) Create a convex hull of the counties. This is useful when the group of counties don't make a solid shape. Use the geojson file created in the previous step to make a new geojson file. 
 ```
 npx --yes turf-cli convex polygons/san-francisco-bay-area.geojson > polygons/san-francisco-bay-area-convex.geojson
 ```
