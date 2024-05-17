@@ -68,7 +68,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: "digests-${{ matrix.platform }}"
+          name: "digests-${{ runner.arch }}"
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -81,7 +81,7 @@ jobs:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
-          # merge-multiple: true
+          merge-multiple: true
           pattern: digests*
           path: /tmp/digests
 
