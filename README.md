@@ -31,5 +31,11 @@ docker build . -t osm-extractor:testing-new-extract
 ```
 7. (test) Generate the extract by running the docker container. This should create a new .pbf file in `./volumes/output`.
 ```
-docker run -v ./volumes/output:/mnt/output -v ./volumes/input:/mnt/input osm-extractor:testing-new-extract osmium extract -d /mnt/output -c /app/config.json /mnt/input/latest.osm.pbf
+docker run \
+-v ./volumes/output:/mnt/output \
+-v ./volumes/input:/mnt/input \
+osm-extractor:testing-new-extract osmium extract \
+	-d /mnt/output \
+	-c /app/config.json \
+	/mnt/input/latest.osm.pbf
 ```
