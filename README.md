@@ -1,8 +1,6 @@
 # OSM Extractor
 
-Makes OSM cutouts from the larger USA data set. 
-
-## How to use
+Makes OpenStreetMap cutouts from the larger USA data set.
 
 Add a geojson file that contains a Feature into the `./polygons` directory, add a coorosponding entry in `./config.json`, then build and run docker container.
 
