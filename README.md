@@ -2,12 +2,16 @@
 
 Makes OpenStreetMap cutouts from the larger USA data set.
 
-Add a geojson file that contains a Feature into the `./polygons` directory, add a coorosponding entry in `./config.json`, then build and run docker container.
-
-Below is an explication for how to make this tool make your own cutouts. Follow the steps below. The San Francisco Bay Area consists of nine counties; they are used in the following example. The tools requires:
+## Dependencies
 
 * [docker](https://www.docker.com/)
 * [node.js](https://nodejs.org/en)
+
+## Usage
+
+Add a geojson file that contains a Feature into the `./polygons` directory, add a corresponding entry in `./config.json`, then build and run the docker container.
+
+Follow the steps below to use the tool to create your own cutouts. The San Francisco Bay Area consists of nine counties; they are used in the following example.
 
 1. If you do not plan to run this locally, skip this step. Find and download the smallest `.osm.pbf` file that includes the entire area you want to extract from [Geofabrik's download page](https://download.geofabrik.de/north-america/us.html) (This example uses the Northern California file). This may take a while, so you can start this download, then move on to the next steps. 
 ```
