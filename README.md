@@ -4,7 +4,7 @@ Makes OSM cutouts from the larger USA data set.
 
 ## How to use
 
-Add a geojson file that contains a Feature into the `./polygons` directory, add a coorosponding entry in `./config.json`, then build and run docker container.
+Add a geojson file that contains a Feature into the `./polygons` directory, add a corresponding entry in `./config.json`, then build and run docker container.
 
 Below is an explication for how to make this tool make your own cutouts. Follow the steps below. The San Francisco Bay Area consists of nine counties; they are used in the following example. The tools requires:
 
