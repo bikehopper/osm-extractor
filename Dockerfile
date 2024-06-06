@@ -8,4 +8,4 @@ WORKDIR /app
 COPY polygons .
 COPY config.json .
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD osmium extract -d /mnt/output -c ./config.json /mnt/input/norcal-latest.osm.pbf
+CMD ["osmium", "extract", "-d", "/mnt/output", "-c", "./config.json", "/mnt/input/latest.osm.pbf"]
