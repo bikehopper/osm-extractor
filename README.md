@@ -25,10 +25,11 @@ Follow the steps below to use the tool to create your own cutouts. The San Franc
 
     2. Use a website like [geojson.io](https://geojson.io/) to make a polygon, then same the json to the `./polygons` directory. 
 
-3.[optional] Create a convex hull of the counties. This is useful when the group of counties don't make a solid shape. Use the geojson file created in the previous step to make a new geojson file. 
+3. [optional] Create a convex hull of the counties. This is useful when the group of counties don't make a solid shape. Use the geojson file created in the previous step to make a new geojson file. 
     ```
     npx --yes turf-cli convex polygons/san-francisco-bay-area.geojson > polygons/san-francisco-bay-area-convex.geojson
     ```
+
 4. Open [config.json](config.json) and add an entry for the extract you'd like to create. Copy an existing entry and replace the values accordingly.
 5. [testing] Build the docker container by running:
     ```
