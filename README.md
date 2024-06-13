@@ -34,9 +34,16 @@ Follow the steps below to use the tool to create your own cutouts. The San Franc
 4. Open [config.json](config.json) and add an entry for the extract you'd like to create. Copy an existing entry and replace the values accordingly.
 5. [testing] Build the docker container by running:
     ```
-    docker build . -t osm-extractor:testing-new-extract
+    docker build . -t osm-extractor
     ```
 6. [testing] Generate the extract by running the docker container. This should create a new .pbf file in `./volumes/output`.
+    In your first shell start the temporal server by running 
     ```
-    docker run -v ./volumes/output:/mnt/output -v ./volumes/input:/mnt/input osm-extractor:testing-new-extract osmium extract -d /mnt/output -c /app/config.json /mnt/input/latest.osm.pbf
+    temporal server start-dev`
     ```
+    
+    In a seprate shell run
+    ```
+    docker compose up
+    ```
+7. Open [http://localhost:8233/namespaces/default/schedules/extract-osm-cutouts-schedule](http://localhost:8233/namespaces/default/schedules/extract-osm-cutouts-schedule) in your browser. Click the arrow in the top right corner of the window, click "trigger", then click "trigger" in the popup modal. This will cause the workflow to run, if it fails it will retry indefinitely. 
