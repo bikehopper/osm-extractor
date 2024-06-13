@@ -1,9 +1,13 @@
 import { Connection, Client, ScheduleOverlapPolicy } from '@temporalio/client';
-import { extract } from './workflows.js';
+import { extract } from './workflows';
+
+const temporalUrl = process.env.TEMPORAL_URL || 'localhost:7233';
 
 async function run() {
   const client = new Client({
-    connection: await Connection.connect(),
+    connection: await Connection.connect({
+      address: temporalUrl
+    }),
   });
 
   // https://typescript.temporal.io/api/classes/client.ScheduleClient#create
@@ -17,7 +21,7 @@ async function run() {
     scheduleId: 'extract-osm-cutouts-schedule',
     policies: {
       catchupWindow: '1 day',
-      overlap: ScheduleOverlapPolicy.ALLOW_ALL,
+      overlap: ScheduleOverlapPolicy.CANCEL_OTHER,
     },
     spec: {
       intervals: [{ every: '1 day' }],
@@ -25,13 +29,7 @@ async function run() {
     },
   });
 
-  console.log(`Started schedule '${schedule.scheduleId}'.
-
-The reminder Workflow will run the Worker every day.
-
-You can now run:
-  npm run schedule.delete
-  `);
+  console.log(`Started schedule '${schedule.scheduleId}'.`);
 
   await client.connection.close();
 }

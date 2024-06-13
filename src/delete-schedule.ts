@@ -1,8 +1,12 @@
 import { Connection, Client } from '@temporalio/client';
 
+const temporalUrl = process.env.TEMPORAL_URL || 'localhost:7233';
+
 async function run() {
   const client = new Client({
-    connection: await Connection.connect(),
+    connection: await Connection.connect({
+      address: temporalUrl
+    }),
   });
 
   const handle = client.schedule.getHandle('extract-osm-cutouts-schedule');

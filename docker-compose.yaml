@@ -1,0 +1,18 @@
+services:
+  osm-extractor-worker:
+    container_name: osm-extractor-worker
+    working_dir: /home/node/app
+    env_file:
+      - path: .env.development.local
+        required: true
+    environment:
+      TEMPORAL_URL: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    image: osm-extractor
+    labels:
+      - 'app=osm-extractor-worker'
+    volumes:
+      - ./volumes/input:/mnt/input 
+      - ./volumes/output:/mnt/output
+    command: ['node', '/app/lib/worker.js']

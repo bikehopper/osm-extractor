@@ -2,10 +2,10 @@
     "extracts": [
         {
             "output": "san-francisco-bay-area.osm.pbf",
-            "directory": "/north-america/us/california",
+            "directory": "north-america/us/california",
             "description": "San Francisco Bay Area nine counties.",
             "polygon": {
-                "file_name": "san-francisco-bay-area-convex.geojson",
+                "file_name": "../polygons/san-francisco-bay-area-convex.geojson",
                 "file_type": "geojson"
             }
         }

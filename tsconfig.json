@@ -2,8 +2,6 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "version": "5.4.5",
   "compilerOptions": {
-    "module": "nodenext",
-		"moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -11,5 +9,5 @@
     "outDir": "./lib",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.geojson"]
 }
