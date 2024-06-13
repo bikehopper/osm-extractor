@@ -1,15 +1,16 @@
 # OSM Extractor
 
-Makes OpenStreetMap cutouts from the larger USA data set.
+Makes OpenStreetMap cutouts from the larger USA data set. Jobs are written as [Temporal](https://docs.temporal.io/) workflows.
 
 ## Dependencies
 
 * [docker](https://www.docker.com/)
-* [node.js](https://nodejs.org/en)
+* [Local temporal server](https://docs.temporal.io/develop/typescript/core-application#run-a-development-server)
+* [Node.js](https://nodejs.org/)(optional)
 
 ## Usage
 
-Add a geojson file that contains a Feature into the `./polygons` directory, add a corresponding entry in `./config.json`, then build and run the docker container.
+Add a geojson file that contains a Feature into the `./polygons` directory, add a corresponding entry in `./src/config.json`, then build and run the docker container.
 
 Follow the steps below to use the tool to create your own cutouts. The San Francisco Bay Area consists of nine counties; they are used in the following example.
 
