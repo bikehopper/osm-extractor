@@ -20,7 +20,11 @@ func main() {
 		osm_extractor_workflow.Create()
 	case "worker":
 		osm_extractor_workflow.Worker()
+	case "pause":
+		osm_extractor_workflow.Pause()
+	case "resume":
+		osm_extractor_workflow.Resume()
 	default:
-		fmt.Printf("Must pass 'create' or 'worker' \n")
+		fmt.Printf("Must pass 'create', 'worker', 'pause', or 'resume' \n")
 	}
 }
