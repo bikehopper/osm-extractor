@@ -2,7 +2,7 @@ import { log, Context } from '@temporalio/activity';
 import { resolve, join } from 'path'
 import { S3Client, CopyObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
-import config from './config.json';
+import config from '../config.json';
 import { createReadStream } from 'node:fs';
 
 const outputDir = process.env.OUTPUT_DIR || '/mnt/output';

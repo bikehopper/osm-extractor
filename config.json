@@ -5,7 +5,7 @@
             "directory": "north-america/us/california",
             "description": "San Francisco Bay Area nine counties.",
             "polygon": {
-                "file_name": "../polygons/san-francisco-bay-area-convex.geojson",
+                "file_name": "polygons/san-francisco-bay-area-convex.geojson",
                 "file_type": "geojson"
             }
         }

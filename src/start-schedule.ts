@@ -17,7 +17,7 @@ async function run() {
         type: 'startWorkflow',
         workflowType: extract,
         args: [],
-        taskQueue: 'schedules',
+        taskQueue: 'osm-exttractor',
       },
       scheduleId: 'extract-osm-cutouts-schedule',
       policies: {

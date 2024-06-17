@@ -17,4 +17,5 @@ RUN npm install --production
 
 COPY --from=build /app/lib ./lib
 COPY ./polygons ./polygons
+COPY config.json .
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
