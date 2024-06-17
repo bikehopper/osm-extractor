@@ -13,8 +13,10 @@ import (
 // OsmExtractor
 func Create() {
 	ctx := context.Background()
+	hostPort := GetEnv("TEMPORAL_URL", "localhost:7233")
+	log.Println(hostPort)
 	temporalClient, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
+		HostPort: hostPort,
 	})
 	if err != nil {
 		log.Fatalln("Unable to create Temporal Client", err)
@@ -26,7 +28,6 @@ func Create() {
 	workflowID := "extract-osm-cutouts"
 	catchupDuration, _ := time.ParseDuration("12h")
 	jitterDuration, _ := time.ParseDuration("2m")
-	// intervalDuration, _ := time.ParseDuration("24h")
 
 	spec := client.ScheduleSpec{
 		Calendars: []client.ScheduleCalendarSpec{
@@ -36,7 +37,7 @@ func Create() {
 		TimeZoneName: "US/Pacific",
 	}
 	// Create the schedule.
-	scheduleHandle, err := temporalClient.ScheduleClient().Create(ctx, client.ScheduleOptions{
+	_, err = temporalClient.ScheduleClient().Create(ctx, client.ScheduleOptions{
 		ID:            scheduleID,
 		CatchupWindow: catchupDuration,
 		Overlap:       enums.SCHEDULE_OVERLAP_POLICY_CANCEL_OTHER,
@@ -47,9 +48,8 @@ func Create() {
 			TaskQueue: "osm-extractor",
 		},
 	})
-	if err != nil {
+	if err != nil && err.Error() != "schedule with this ID is already registered" {
 		log.Fatalln("Unable to create schedule", err)
 	}
 	log.Println("Schedule created", "ScheduleID", scheduleID)
-	_, _ = scheduleHandle.Describe(ctx)
 }

@@ -10,8 +10,9 @@ import (
 // OsmExtractor
 func Resume() {
 	ctx := context.Background()
+	hostPort := GetEnv("TEMPORAL_URL", "localhost:7233")
 	temporalClient, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
+		HostPort: hostPort,
 	})
 	if err != nil {
 		log.Fatalln("Unable to create Temporal Client", err)

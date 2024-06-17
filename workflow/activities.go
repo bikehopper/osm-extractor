@@ -37,9 +37,9 @@ type polygon struct {
 func ExtractOsmCutoutsActivity(ctx context.Context) error {
 	logger := activity.GetLogger(ctx)
 	logger.Info("extracting OSM cutouts")
-	outputDir := getEnv("OUTPUT_DIR", "/mnt/output")
-	pbfPath := getEnv("PBF_PATH", "/mnt/input/latest.osm.pbf")
-	configPath := getEnv("CONFIG_PATH", "../config.json")
+	outputDir := GetEnv("OUTPUT_DIR", "/mnt/output")
+	pbfPath := GetEnv("PBF_PATH", "/mnt/input/latest.osm.pbf")
+	configPath := GetEnv("CONFIG_PATH", "./config.json")
 
 	cmd := exec.Command("osmium", "extract", "--overwrite", "-d", outputDir, "-c", configPath, pbfPath)
 	stderr, err := cmd.StderrPipe()
@@ -70,10 +70,10 @@ func UploadOsmCutoutsActivity(ctx context.Context) error {
 	logger := activity.GetLogger(ctx)
 	logger.Info("uploading extracts to bucket")
 
-	outputDir := getEnv("OUTPUT_DIR", "/mnt/output")
-	bucket := getEnv("BUCKET", "osm-extracts")
-	s3Region := getEnv("S3_REGION", "us-east-1")
-	s3EndpointUrl := getEnv("S3_ENDPOINT_URL", "")
+	outputDir := GetEnv("OUTPUT_DIR", "/mnt/output")
+	bucket := GetEnv("BUCKET", "osm-extracts")
+	s3Region := GetEnv("S3_REGION", "us-east-1")
+	s3EndpointUrl := GetEnv("S3_ENDPOINT_URL", "")
 	scheduledDate := activity.GetInfo(ctx).ScheduledTime
 
 	cfg, _ := config.LoadDefaultConfig(context.TODO())
@@ -131,9 +131,9 @@ func CopyOsmCutouts(ctx context.Context) error {
 	logger.Info("Creating 'latest' copies of extracts")
 	scheduledDate := activity.GetInfo(ctx).ScheduledTime
 
-	bucket := getEnv("BUCKET", "osm-extracts")
-	s3Region := getEnv("S3_REGION", "us-east-1")
-	s3EndpointUrl := getEnv("S3_ENDPOINT_URL", "")
+	bucket := GetEnv("BUCKET", "osm-extracts")
+	s3Region := GetEnv("S3_REGION", "us-east-1")
+	s3EndpointUrl := GetEnv("S3_ENDPOINT_URL", "")
 
 	cfg, _ := config.LoadDefaultConfig(context.TODO())
 	s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
@@ -167,7 +167,7 @@ func CopyOsmCutouts(ctx context.Context) error {
 	return nil
 }
 
-func getEnv(key, fallback string) string {
+func GetEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}

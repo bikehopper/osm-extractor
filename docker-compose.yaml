@@ -5,29 +5,33 @@ services:
       - path: .env.development.local
         required: true
     environment:
-      TEMPORAL_URL: host.docker.internal
+      TEMPORAL_URL: host.docker.internal:7233
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: osm-extractor
+    image: osm-extractor:local
+    build:
+      context: .
     labels:
       - 'app=osm-extractor-workflow-start'
-    command: ['./cmd', 'create']
+    command: ['/app/osm-extractor-workflow', 'create']
   osm-extractor-worker:
     container_name: osm-extractor-worker
     env_file:
       - path: .env.development.local
         required: true
     environment:
-      TEMPORAL_URL: host.docker.internal
+      TEMPORAL_URL: host.docker.internal:7233
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: osm-extractor
+    image: osm-extractor:local
+    build:
+      context: .
     labels:
       - 'app=osm-extractor-worker'
     volumes:
       - ./volumes/input:/mnt/input 
       - ./volumes/output:/mnt/output
-    command: ['./cmd', 'worker']
+    command: ['/app/osm-extractor-workflow', 'worker']
     depends_on:
       osm-extractor-workflow-start:
         condition: service_completed_successfully
@@ -38,13 +42,15 @@ services:
       - path: .env.development.local
         required: true
     environment:
-      TEMPORAL_URL: host.docker.internal
+      TEMPORAL_URL: host.docker.internal:7233
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: osm-extractor
+    image: osm-extractor:local
+    build:
+      context: .
     labels:
       - 'app=osm-extractor-workflow-resume'
-    command: ['./cmd', 'resume']
+    command: ['./osm-extractor-workflow', 'resume']
   osm-extractor-workflow-pause:
     profiles: ['pause']
     container_name: osm-extractor-workflow-pause
@@ -52,10 +58,12 @@ services:
       - path: .env.development.local
         required: true
     environment:
-      TEMPORAL_URL: host.docker.internal
+      TEMPORAL_URL: host.docker.internal:7233
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: osm-extractor
+    image: osm-extractor:local
+    build:
+      context: .
     labels:
       - 'app=osm-extractor-workflow-pause'
-    command: ['./cmd', 'pause']
+    command: ['./osm-extractor-workflow', 'pause']

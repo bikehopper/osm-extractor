@@ -8,9 +8,10 @@ import (
 )
 
 func Worker() {
+	hostPort := GetEnv("TEMPORAL_URL", "localhost:7233")
 	// The client and worker are heavyweight objects that should be created once per process.
 	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
+		HostPort: hostPort,
 	})
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
