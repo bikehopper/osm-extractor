@@ -1,18 +1,17 @@
-package main
+package osm_extractor_workflow
 
 import (
 	"context"
 	"log"
 	"time"
 
-	osm_extractor "github.com/bikehopper/osm-extractor/workflow"
 	"github.com/google/uuid"
 	"go.temporal.io/api/enums/v1"
 	"go.temporal.io/sdk/client"
 )
 
 // OsmExtractor
-func main() {
+func Create() {
 	ctx := context.Background()
 	temporalClient, err := client.Dial(client.Options{
 		HostPort: client.DefaultHostPort,
@@ -44,7 +43,7 @@ func main() {
 		Spec:          spec,
 		Action: &client.ScheduleWorkflowAction{
 			ID:        workflowID + uuid.New().String(),
-			Workflow:  osm_extractor.OsmExtractor,
+			Workflow:  OsmExtractor,
 			TaskQueue: "osm-extractor",
 		},
 	})

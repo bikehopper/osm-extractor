@@ -1,4 +1,4 @@
-package osm_extractor
+package osm_extractor_workflow
 
 import (
 	"bufio"

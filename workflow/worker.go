@@ -1,14 +1,13 @@
-package main
+package osm_extractor_workflow
 
 import (
 	"log"
 
-	osm_extractor "github.com/bikehopper/osm-extractor/workflow"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 )
 
-func main() {
+func Worker() {
 	// The client and worker are heavyweight objects that should be created once per process.
 	c, err := client.Dial(client.Options{
 		HostPort: client.DefaultHostPort,
@@ -20,10 +19,10 @@ func main() {
 
 	w := worker.New(c, "osm-extractor", worker.Options{})
 
-	w.RegisterWorkflow(osm_extractor.OsmExtractor)
-	w.RegisterActivity(osm_extractor.ExtractOsmCutoutsActivity)
-	w.RegisterActivity(osm_extractor.UploadOsmCutoutsActivity)
-	w.RegisterActivity(osm_extractor.CopyOsmCutouts)
+	w.RegisterWorkflow(OsmExtractor)
+	w.RegisterActivity(ExtractOsmCutoutsActivity)
+	w.RegisterActivity(UploadOsmCutoutsActivity)
+	w.RegisterActivity(CopyOsmCutouts)
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {

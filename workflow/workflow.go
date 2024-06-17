@@ -1,4 +1,4 @@
-package osm_extractor
+package osm_extractor_workflow
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-// ScheduleWorkflow executes on the given schedule
+// OsmExtractor executes on the given schedule
 func OsmExtractor(ctx workflow.Context) error {
 
 	workflow.GetLogger(ctx).Info("Schedule workflow started.", "StartTime", workflow.Now(ctx))
