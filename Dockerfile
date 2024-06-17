@@ -1,21 +1,19 @@
-FROM node:current-slim as build
-RUN mkdir /app
-WORKDIR /app
-COPY package.json package-lock.json tsconfig.json /app
-RUN npm install
-COPY ./src ./src
-RUN npm run build
+FROM golang:1.22 as build
+WORKDIR /usr/src/app
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
 
-FROM node:current-slim
+COPY workflow ./workflow
+RUN go build -v -o /usr/local/bin/create /usr/src/app/workflow/create/
+RUN go build -v -o /usr/local/bin/worker /usr/src/app/workflow/worker/
+
+FROM debian:12-slim
 RUN apt-get update && \
     apt-get install -y osmium-tool dumb-init && \
     mkdir /app
 VOLUME ["/mnt/input", "/mnt/output"]
 WORKDIR /app
-COPY package.json /app
-RUN npm install --production
-
-COPY --from=build /app/lib ./lib
-COPY ./polygons ./polygons
+COPY --from=build /usr/local/bin/create /usr/local/bin/worker .
+COPY polygons ./polygons
 COPY config.json .
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]

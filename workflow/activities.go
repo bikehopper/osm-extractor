@@ -196,7 +196,7 @@ func readExtractFile(filePath string) (Extracts, error) {
 }
 
 func getDatedFileName(fileName string, date time.Time) string {
-	return date.Format("2006-02-01") + "-" + fileName
+	return date.Format("2006-01-02") + "-" + fileName
 }
 
 func getLatestFileName(fileName string) string {
