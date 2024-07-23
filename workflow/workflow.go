@@ -3,36 +3,59 @@ package osm_extractor_workflow
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"go.temporal.io/sdk/workflow"
 )
 
 // OsmExtractor executes on the given schedule
 func OsmExtractor(ctx workflow.Context) error {
-
-	workflow.GetLogger(ctx).Info("Schedule workflow started.", "StartTime", workflow.Now(ctx))
+	so := &workflow.SessionOptions{
+		CreationTimeout:  time.Minute,
+		ExecutionTimeout: 20 * time.Minute,
+	}
+	sessionCtx, err := workflow.CreateSession(ctx, so)
+	if err != nil {
+		return err
+	}
+	defer workflow.CompleteSession(sessionCtx)
 
 	ao := workflow.ActivityOptions{
 		TaskQueue:           "osm-extractor",
-		StartToCloseTimeout: 30 * time.Second,
+		StartToCloseTimeout: 10 * time.Second,
 	}
-	ctx1 := workflow.WithActivityOptions(ctx, ao)
+	activitySessionCtx := workflow.WithActivityOptions(sessionCtx, ao)
 
-	err := workflow.ExecuteActivity(ctx1, ExtractOsmCutoutsActivity).Get(ctx, nil)
+	err = workflow.ExecuteActivity(activitySessionCtx, ExtractOsmCutoutsActivity).Get(ctx, nil)
 	if err != nil {
 		workflow.GetLogger(ctx).Error("Executing activity 'ExtractOsmCutoutsActivity' failed", "Error", err)
 		return err
 	}
 
-	err = workflow.ExecuteActivity(ctx1, UploadOsmCutoutsActivity).Get(ctx, nil)
+	err = workflow.ExecuteActivity(activitySessionCtx, UploadOsmCutoutsActivity).Get(ctx, nil)
 	if err != nil {
 		workflow.GetLogger(ctx).Error("Executing activity 'UploadOsmCutoutsActivity' failed", "Error", err)
 		return err
 	}
 
-	err = workflow.ExecuteActivity(ctx1, CopyOsmCutouts).Get(ctx, nil)
+	var copyOsmCutoutsResult LatestExractsObjects
+	err = workflow.ExecuteActivity(activitySessionCtx, CopyOsmCutouts).Get(ctx, &copyOsmCutoutsResult)
 	if err != nil {
 		workflow.GetLogger(ctx).Error("Executing activity 'CopyOsmCutouts' failed", "Error", err)
 		return err
+	}
+
+	cwo := workflow.ChildWorkflowOptions{
+		WorkflowExecutionTimeout: 10 * time.Minute,
+		TaskQueue:                "REAPLCE",
+		WorkflowID:               "REPLACE" + "-" + uuid.New().String(),
+	}
+	childCtx := workflow.WithChildOptions(ctx, cwo)
+
+	for _, extract := range copyOsmCutoutsResult.ExtractObjects {
+		err = workflow.ExecuteChildWorkflow(childCtx, "REPLACE", extract).Get(childCtx, nil)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -2,10 +2,37 @@
     "extracts": [
         {
             "output": "san-francisco-bay-area.osm.pbf",
-            "directory": "north-america/us/california",
+            "directory": "north-america/us/california/san-francisco-bay-area",
             "description": "San Francisco Bay Area nine counties.",
             "polygon": {
                 "file_name": "polygons/san-francisco-bay-area-convex.geojson",
+                "file_type": "geojson"
+            }
+        },
+        {
+            "output": "harrisburg-area.osm.pbf",
+            "directory": "north-america/us/pennsylvania/harrisburg-area",
+            "description": "Harrisburg Capital Area",
+            "polygon": {
+                "file_name": "polygons/harrisburg-area.geojson",
+                "file_type": "geojson"
+            }
+        },
+        {
+            "output": "us-virgin-island-saint-croix.osm.pbf",
+            "directory": "north-america/us/us-virgin-island/saint-croix",
+            "description": "US Virgin Island Saint Croix",
+            "polygon": {
+                "file_name": "polygons/us-virgin-island-saint-croix.geojson",
+                "file_type": "geojson"
+            }
+        },
+        {
+            "output": "salt-lake-metro.osm.pbf",
+            "directory": "north-america/us/utah/salt-lake-metro",
+            "description": "Salt Lake City Metro Area",
+            "polygon": {
+                "file_name": "polygons/salt-lake-metro.geojson",
                 "file_type": "geojson"
             }
         }

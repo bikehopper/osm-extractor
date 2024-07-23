@@ -34,14 +34,52 @@ type polygon struct {
 	FileType string `json:"file_type"`
 }
 
+type LatestExractsObjects struct {
+	ExtractObjects []ExtractObject
+}
+
+type ExtractObject struct {
+	Bucket string
+	Key    string
+}
+
 func ExtractOsmCutoutsActivity(ctx context.Context) error {
 	logger := activity.GetLogger(ctx)
 	logger.Info("extracting OSM cutouts")
 	outputDir := GetEnv("OUTPUT_DIR", "/mnt/output")
-	pbfPath := GetEnv("PBF_PATH", "/mnt/input/latest.osm.pbf")
 	configPath := GetEnv("CONFIG_PATH", "./config.json")
+	bucket := GetEnv("BUCKET", "osm-extracts")
+	s3Region := GetEnv("S3_REGION", "us-east-1")
+	s3EndpointUrl := GetEnv("S3_ENDPOINT_URL", "")
+	s3ObjKey := GetEnv("PBF_KEY", "")
 
-	cmd := exec.Command("osmium", "extract", "--overwrite", "-d", outputDir, "-c", configPath, pbfPath)
+	cfg, _ := config.LoadDefaultConfig(context.TODO())
+	s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.Region = s3Region
+		o.BaseEndpoint = aws.String(s3EndpointUrl)
+		o.UsePathStyle = true
+	})
+
+	pbfObj, err := s3Client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(s3ObjKey),
+	})
+	if err != nil {
+		return err
+	}
+
+	file, err := os.CreateTemp("", "latest.*.osm.pbf")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(file.Name())
+
+	_, err = io.Copy(file, pbfObj.Body)
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("osmium", "extract", "--overwrite", "-d", outputDir, "-c", configPath, file.Name())
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		logger.Info("error getting osmium standerr pipe")
@@ -126,7 +164,7 @@ func UploadOsmCutoutsActivity(ctx context.Context) error {
 	return nil
 }
 
-func CopyOsmCutouts(ctx context.Context) error {
+func CopyOsmCutouts(ctx context.Context) (*LatestExractsObjects, error) {
 	logger := activity.GetLogger(ctx)
 	logger.Info("Creating 'latest' copies of extracts")
 	scheduledDate := activity.GetInfo(ctx).ScheduledTime
@@ -145,8 +183,10 @@ func CopyOsmCutouts(ctx context.Context) error {
 	extracts, err := readExtractFile("config.json")
 	if err != nil {
 		logger.Error("error reading config.json")
-		return err
+		return nil, err
 	}
+
+	extractObjs := &LatestExractsObjects{}
 
 	for i := 0; i < len(extracts.Extracts); i++ {
 		destPathDated := filepath.Join(extracts.Extracts[i].Directory, getDatedFileName(extracts.Extracts[i].Output, scheduledDate))
@@ -159,12 +199,14 @@ func CopyOsmCutouts(ctx context.Context) error {
 		})
 		if err != nil {
 			logger.Error("error while copying file in bucket")
-			return err
+			return nil, err
 		}
-
-		fmt.Println("File moved successfully.")
+		extractObjs.ExtractObjects = append(extractObjs.ExtractObjects, ExtractObject{
+			Bucket: bucket,
+			Key:    destPathLatest,
+		})
 	}
-	return nil
+	return extractObjs, nil
 }
 
 func GetEnv(key, fallback string) string {

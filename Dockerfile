@@ -8,6 +8,7 @@ RUN make build
 
 FROM debian:12-slim
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y ca-certificates osmium-tool dumb-init && \
     mkdir /app
 VOLUME ["/mnt/input", "/mnt/output"]

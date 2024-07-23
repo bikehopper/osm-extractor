@@ -5,6 +5,7 @@ import (
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func Worker() {
@@ -18,9 +19,13 @@ func Worker() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, "osm-extractor", worker.Options{})
-
-	w.RegisterWorkflow(OsmExtractor)
+	w := worker.New(c, "osm-extractor", worker.Options{
+		EnableSessionWorker: true,
+	})
+	registerWFOptions := workflow.RegisterOptions{
+		Name: "extract-osm-cutouts",
+	}
+	w.RegisterWorkflowWithOptions(OsmExtractor, registerWFOptions)
 	w.RegisterActivity(ExtractOsmCutoutsActivity)
 	w.RegisterActivity(UploadOsmCutoutsActivity)
 	w.RegisterActivity(CopyOsmCutouts)

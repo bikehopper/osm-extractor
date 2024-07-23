@@ -16,15 +16,9 @@ func main() {
 		argsWithoutProg = os.Args[1:]
 	}
 	switch argsWithoutProg[0] {
-	case "create":
-		osm_extractor_workflow.Create()
 	case "worker":
 		osm_extractor_workflow.Worker()
-	case "pause":
-		osm_extractor_workflow.Pause()
-	case "resume":
-		osm_extractor_workflow.Resume()
 	default:
-		fmt.Printf("Must pass 'create', 'worker', 'pause', or 'resume' \n")
+		fmt.Printf("Must pass 'worker' \n")
 	}
 }
