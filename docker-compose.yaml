@@ -1,80 +1,19 @@
 services:
-  osm-extractor-workflow-start:
-    container_name: osm-extractor-workflow-start
-    working_dir: /home/node/app
-    env_file:
-      - path: .env.development.local
-        required: true
-    environment:
-      TEMPORAL_URL: host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    image: osm-extractor
-    labels:
-      - 'app=osm-extractor-workflow-start'
-    command: ['node', '/app/lib/start-schedule.js']
   osm-extractor-worker:
     container_name: osm-extractor-worker
-    working_dir: /home/node/app
     env_file:
       - path: .env.development.local
         required: true
     environment:
-      TEMPORAL_URL: host.docker.internal
+      TEMPORAL_URL: host.docker.internal:7233
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    image: osm-extractor
+    image: osm-extractor:local
+    build:
+      context: .
     labels:
       - 'app=osm-extractor-worker'
     volumes:
       - ./volumes/input:/mnt/input 
       - ./volumes/output:/mnt/output
-    command: ['node', '/app/lib/worker.js']
-    depends_on:
-      osm-extractor-workflow-start:
-        condition: service_completed_successfully
-  osm-extractor-workflow-delete:
-    profiles: ['delete']
-    container_name: osm-extractor-workflow-delete
-    working_dir: /home/node/app
-    env_file:
-      - path: .env.development.local
-        required: true
-    environment:
-      TEMPORAL_URL: host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    image: osm-extractor
-    labels:
-      - 'app=osm-extractor-workflow-delete'
-    command: ['node', '/app/lib/delete-schedule.js']
-  osm-extractor-workflow-unpause:
-    profiles: ['unpause']
-    container_name: osm-extractor-workflow-unpause
-    working_dir: /home/node/app
-    env_file:
-      - path: .env.development.local
-        required: true
-    environment:
-      TEMPORAL_URL: host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    image: osm-extractor
-    labels:
-      - 'app=osm-extractor-workflow-unpause'
-    command: ['node', '/app/lib/unpause-schedule.js']
-  osm-extractor-workflow-pause:
-    profiles: ['pause']
-    container_name: osm-extractor-workflow-pause
-    working_dir: /home/node/app
-    env_file:
-      - path: .env.development.local
-        required: true
-    environment:
-      TEMPORAL_URL: host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    image: osm-extractor
-    labels:
-      - 'app=osm-extractor-workflow-pause'
-    command: ['node', '/app/lib/pause-schedule.js']
+    command: ['/app/osm-extractor-workflow', 'worker']
